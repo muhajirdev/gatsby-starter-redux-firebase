@@ -3,6 +3,7 @@ import { Link } from 'gatsby'
 
 import Layout from '../components/layout'
 import FetchingExample from '../containers/FetchingExample'
+import Todo from '../containers/Todo'
 import SignOut from '../containers/SignOut'
 
 const IndexPage = () => (
@@ -15,6 +16,7 @@ const IndexPage = () => (
       <code>FetchingExample.js</code>
     </p>
     <FetchingExample />
+    <Todo />
     <Link to="/page-2/">Go to page 2</Link>
     <SignOut />
   </Layout>

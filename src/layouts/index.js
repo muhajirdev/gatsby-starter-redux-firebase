@@ -1,13 +1,16 @@
 import React, { Component } from 'react'
+import { Provider as ReduxProvider } from 'react-redux'
 
 import getFirebase from '../firebase'
 import FirebaseContext from '../components/FirebaseContext'
 import SignIn from '../containers/SignIn'
+import { createStoreWithFirebase } from '../store'
 
 class Layout extends Component {
   state = {
     firebase: null,
     authenticated: false,
+    store: null,
   }
 
   componentDidMount() {
@@ -18,6 +21,9 @@ class Layout extends Component {
     Promise.all([app, auth, database]).then(values => {
       const firebase = getFirebase(values[0])
       this.setState({ firebase })
+
+      const store = createStoreWithFirebase(firebase)
+      this.setState({ store })
 
       firebase.auth().onAuthStateChanged(user => {
         if (!user) {
@@ -30,14 +36,16 @@ class Layout extends Component {
   }
 
   render = () => {
-    const { firebase, authenticated } = this.state
+    const { firebase, authenticated, store } = this.state
 
-    if (!firebase) return null
+    if (!firebase || !store) return null
 
     return (
-      <FirebaseContext.Provider value={firebase}>
-        {authenticated ? this.props.children : <SignIn />}
-      </FirebaseContext.Provider>
+      <ReduxProvider store={store}>
+        <FirebaseContext.Provider value={firebase}>
+          {authenticated ? this.props.children : <SignIn />}
+        </FirebaseContext.Provider>
+      </ReduxProvider>
     )
   }
 }
